@@ -36,6 +36,8 @@ export async function saveRoomToDatabase(room) {
       createdAt: r.createdAt,
     }));
 
+    const messagesList = (room.getRecentMessages ? room.getRecentMessages() : room.messages || []).slice(-100);
+
     await RoomModel.findOneAndUpdate(
       { roomId: room.id },
       {
@@ -49,6 +51,7 @@ export async function saveRoomToDatabase(room) {
         },
         participants: participantsList,
         changeRequests: changeRequestsList,
+        messages: messagesList,
         maxParticipants: room.maxParticipants,
         lastActivityAt: room.lastActivityAt,
       },
@@ -109,6 +112,17 @@ export async function restoreRoomFromDatabase(roomId, roomManager) {
           createdAt: cr.createdAt,
         });
       }
+    }
+
+    if (Array.isArray(doc.messages)) {
+      room.messages = doc.messages.map((m) => ({
+        messageId: m.messageId,
+        userId: m.userId,
+        username: m.username,
+        role: m.role,
+        message: m.message,
+        sentAt: m.sentAt,
+      }));
     }
 
     roomManager.rooms.set(room.id, room);

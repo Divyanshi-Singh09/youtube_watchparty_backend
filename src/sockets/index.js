@@ -8,6 +8,7 @@ import { registerRoomHandlers } from './handlers/roomHandler.js';
 import { registerPlaybackHandlers } from './handlers/playbackHandler.js';
 import { registerRoleHandlers } from './handlers/roleHandler.js';
 import { registerApprovalHandlers } from './handlers/approvalHandler.js';
+import { registerChatHandlers } from './handlers/chatHandler.js';
 
 import { roomManager } from '../domain/RoomManager.js';
 import { env } from '../config/env.js';
@@ -36,6 +37,9 @@ export function setupSockets(io) {
 
     // Register participant request & approval handlers (request_change, resolve_change)
     registerApprovalHandlers(io, socket);
+
+    // Register live chat handlers (chat_message)
+    registerChatHandlers(io, socket);
 
     socket.on('disconnect', () => {
       const roomId = socket.data?.roomId;

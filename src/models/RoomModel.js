@@ -51,6 +51,18 @@ const ChangeRequestSubSchema = new mongoose.Schema(
   { _id: false }
 );
 
+const ChatMessageSubSchema = new mongoose.Schema(
+  {
+    messageId: { type: String, required: true },
+    userId: { type: String, required: true },
+    username: { type: String, required: true },
+    role: { type: String, required: true },
+    message: { type: String, required: true },
+    sentAt: { type: Number, default: Date.now },
+  },
+  { _id: false }
+);
+
 const RoomSchema = new mongoose.Schema(
   {
     roomId: {
@@ -65,6 +77,7 @@ const RoomSchema = new mongoose.Schema(
     playbackState: { type: PlaybackSubSchema, default: () => ({}) },
     participants: { type: [ParticipantSubSchema], default: [] },
     changeRequests: { type: [ChangeRequestSubSchema], default: [] },
+    messages: { type: [ChatMessageSubSchema], default: [] },
     maxParticipants: { type: Number, default: 50 },
     lastActivityAt: { type: Number, default: Date.now },
   },

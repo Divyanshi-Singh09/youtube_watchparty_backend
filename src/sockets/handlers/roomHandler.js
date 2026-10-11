@@ -111,6 +111,7 @@ export function registerRoomHandlers(io, socket) {
         sessionToken: activeToken,
         role: participant.role,
         participants: room.toParticipantDTOs(),
+        messages: room.getRecentMessages(),
       },
     });
 

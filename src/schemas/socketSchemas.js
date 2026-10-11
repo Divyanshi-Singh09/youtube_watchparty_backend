@@ -140,3 +140,16 @@ export const resolveChangeSchema = z.object({
   }),
 });
 
+// Chat message event payload: { message: string } (docs/04 §6.4)
+export const chatMessageSchema = z.object({
+  message: z
+    .string({
+      required_error: 'message is required',
+      invalid_type_error: 'message must be a string',
+    })
+    .trim()
+    .min(1, { message: 'message must be between 1 and 500 characters' })
+    .max(500, { message: 'message must be between 1 and 500 characters' }),
+});
+
+

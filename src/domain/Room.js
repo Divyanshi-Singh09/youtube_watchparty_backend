@@ -38,6 +38,7 @@ export class Room {
     this.playback = new PlaybackState({ videoId: initialVideoId });
     this.participants = new Map(); // Map<userId, Participant>
     this.changeRequests = new Map(); // Map<requestId, { requestId, userId, username, action, status, createdAt }>
+    this.messages = []; // Array of recent chat messages (capped at 100)
     this.maxParticipants = maxParticipants;
     this.createdAt = Date.now();
     this.lastActivityAt = Date.now();
@@ -291,5 +292,41 @@ export class Room {
   toSyncState(now = Date.now()) {
     return this.playback.toSyncState(now);
   }
+
+  /**
+   * Appends a chat message to the room's message history (capped at 100).
+   * @param {Object} params
+   * @param {string} params.userId
+   * @param {string} params.username
+   * @param {string} params.role
+   * @param {string} params.message
+   * @returns {Object} The created chat message record
+   */
+  addMessage({ userId, username, role, message }) {
+    const messageRecord = {
+      messageId: randomUUID(),
+      userId,
+      username,
+      role,
+      message,
+      sentAt: Date.now(),
+    };
+
+    this.messages.push(messageRecord);
+    if (this.messages.length > 100) {
+      this.messages = this.messages.slice(-100);
+    }
+    this.lastActivityAt = Date.now();
+    return messageRecord;
+  }
+
+  /**
+   * Retrieves a shallow copy of recent chat messages.
+   * @returns {Array<Object>}
+   */
+  getRecentMessages() {
+    return [...this.messages];
+  }
 }
+
 
